@@ -58,7 +58,29 @@ public class MemorySpace {
 	 * @return the base address of the allocated block, or -1 if unable to allocate
 	 */
 	public int malloc(int length) {		
-		//// Replace the following statement with your code
+		Node current = freeList.getFirst();
+		Node match = null;
+
+		while (current != null){
+			if (current.block.length >= length){
+				match = current;
+				break;
+			}
+			current = current.next;
+		}
+
+		if (match != null){
+			MemoryBlock toAlock = new MemoryBlock(match.block.baseAddress, length);
+			allocatedList.addLast(toAlock);
+			match.block.length -= length;
+			int address = match.block.baseAddress;
+			match.block.baseAddress += length;
+			if(match.block.length == 0){
+				freeList.remove(match);
+			}
+			return address;
+			}
+
 		return -1;
 	}
 
@@ -71,7 +93,25 @@ public class MemorySpace {
 	 *            the starting address of the block to freeList
 	 */
 	public void free(int address) {
-		//// Write your code here
+		if(freeList.getSize() == 1 && freeList.getFirst().block.baseAddress == 0 && freeList.getFirst().block.length == 100) {
+			throw new IllegalArgumentException(
+					"index must be between 0 and size");
+		}
+		Node current = allocatedList.getNode(0);
+		Node match = null;
+		while (current != null) {	
+			if (current.block.baseAddress == address){
+				match = current;
+				break;
+			}
+			current = current.next;
+		}
+		if (match == null) {
+			return;
+		} else {
+			freeList.addLast(match.block);
+			allocatedList.remove(match.block);
+		}
 	}
 	
 	/**
