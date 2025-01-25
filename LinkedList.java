@@ -282,10 +282,8 @@ public class LinkedList {
 					MemoryBlock temp = current.block;
 					current.block = next.block;
 					next.block = temp;
-
 				}
 			}
-			
 		}
 	}
 }
